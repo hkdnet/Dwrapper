@@ -54,7 +54,7 @@ Public MustInherit Class DwrapperBase
         End If
     End Sub
     Public Function Execute(sql As String,
-                     Optional data As Object = Nothing) As Integer
+                            Optional data As Object = Nothing) As Integer
         _sql = sql
         _data = data
         RaiseEvent BeforeSql(sql, data)
