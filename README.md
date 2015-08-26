@@ -38,7 +38,7 @@ Using dwrapper.Open
         dwrapper.Commit()
     End Using
     Dim selectSql = "SELECT COUNT(*) AS count FROM member"
-    Dim c = dwrapper.Query(Of Member)(selectSql)
+    Dim c = dwrapper.Query(Of Count)(selectSql)
     Assert.AreEqual(2, afterSqlCount)
 End Using
 ```

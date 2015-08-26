@@ -118,7 +118,7 @@ Public Class DwrapperTest
         Using dapperWrapper.Open
             Assert.AreEqual(0, beforeSqlCount)
             Dim selectSql = "SELECT COUNT(*) AS count FROM member"
-            Dim c = dapperWrapper.Query(Of Member)(selectSql)
+            Dim c = dapperWrapper.Query(Of Count)(selectSql)
             Assert.AreEqual(1, beforeSqlCount)
         End Using
     End Sub
