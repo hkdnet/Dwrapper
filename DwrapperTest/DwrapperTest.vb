@@ -7,7 +7,7 @@ Imports System.Data.SQLite
 <TestClass()>
 Public Class DwrapperTest
 #Region "test helper class"
-    Public Class DapperWrapperSQLite
+    Public Class SQLiteDwrapperForTest
         Inherits SQLiteDwrapper
         Sub New()
             MyBase.New("DataSource=test.db")
@@ -34,7 +34,7 @@ Public Class DwrapperTest
         Dim dropSql = "DROP TABLE IF EXISTS member"
         Dim createSql = "CREATE TABLE member(id INTEGER  PRIMARY KEY AUTOINCREMENT, name TEXT)"
         Dim insertSql = "INSERT INTO member (name) VALUES ('{0}')"
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Using dapperWrapper.Open
             Using tran = dapperWrapper.BeginTransaction
                 dapperWrapper.Execute(dropSql)
@@ -51,7 +51,7 @@ Public Class DwrapperTest
     <TestMethod()>
     <ExpectedException(GetType(ObjectDisposedException))>
     Public Sub Using句によって接続が閉じられること()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Using dapperWrapper.Open
             Using tran = dapperWrapper.BeginTransaction
                 Dim sql = "DELETE FROM member WHERE name = '{0}'"
@@ -64,7 +64,7 @@ Public Class DwrapperTest
     End Sub
     <TestMethod>
     Public Sub OpenしないときにAutoOpenできること()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Dim sql = "SELECT COUNT(*) AS count FROM member"
         Dim c = dapperWrapper.QueryTop1(Of Count)(sql)
         Assert.AreEqual(3, c.Count)
@@ -72,7 +72,7 @@ Public Class DwrapperTest
     End Sub
     <TestMethod()>
     Public Sub Transactionを張った時CommitしないとRollbackされること()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Using dapperWrapper.Open
             Dim selectSql = "SELECT COUNT(*) AS count FROM member"
             Dim c = dapperWrapper.QueryTop1(Of Count)(selectSql)
@@ -89,7 +89,7 @@ Public Class DwrapperTest
     End Sub
     <TestMethod()>
     Public Sub Transactionを張った時Commitすると確定されること()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Using dapperWrapper.Open
             Dim selectSql = "SELECT COUNT(*) AS count FROM member"
             Dim c = dapperWrapper.QueryTop1(Of Count)(selectSql)
@@ -110,7 +110,7 @@ Public Class DwrapperTest
 #Region "イベント関連"
     <TestMethod()>
     Public Sub BeforeSQLイベントにイベントを追加できること()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Dim beforeSqlCount = 0
         AddHandler dapperWrapper.BeforeSql, Sub(_1, _2)
                                                 beforeSqlCount += 1
@@ -124,7 +124,7 @@ Public Class DwrapperTest
     End Sub
     <TestMethod()>
     Public Sub AfterSQLイベントにイベントを追加できること()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Dim afterSqlCount = 0
         AddHandler dapperWrapper.AfterSql, Sub(_1, _2)
                                                afterSqlCount += 1
@@ -144,7 +144,7 @@ Public Class DwrapperTest
     End Sub
     <TestMethod()>
     Public Sub AfterQueryイベントにイベントを追加できること()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Dim afterQueryCount = 0
         AddHandler dapperWrapper.AfterQuery, Sub(_1, _2, _3, _4)
                                                  afterQueryCount += 1
@@ -158,7 +158,7 @@ Public Class DwrapperTest
     End Sub
     <TestMethod()>
     Public Sub ExecuteのあとにAfterQueryイベントが発火されないこと()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Dim afterQueryCount = 0
         AddHandler dapperWrapper.AfterQuery, Sub(_1, _2, _3, _4)
                                                  afterQueryCount += 1
@@ -175,7 +175,7 @@ Public Class DwrapperTest
     End Sub
     <TestMethod()>
     Public Sub AfterExecuteイベントにイベントを追加できること()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Dim afterExecuteCount = 0
         AddHandler dapperWrapper.AfterExecute, Sub(_1, _2, _3)
                                                    afterExecuteCount += 1
@@ -192,7 +192,7 @@ Public Class DwrapperTest
     End Sub
     <TestMethod()>
     Public Sub QueryのあとにAfterExecuteイベントが発火されないこと()
-        Dim dapperWrapper = New DapperWrapperSQLite()
+        Dim dapperWrapper = New SQLiteDwrapperForTest()
         Dim afterExecuteCount = 0
         AddHandler dapperWrapper.AfterExecute, Sub(_1, _2, _3)
                                                    afterExecuteCount += 1
