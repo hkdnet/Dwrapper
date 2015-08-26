@@ -8,18 +8,10 @@ Imports System.Data.SQLite
 Public Class DwrapperTest
 #Region "test helper class"
     Public Class DapperWrapperSQLite
-        Inherits DapperWrapperBase
+        Inherits SQLiteDwrapper
         Sub New()
-            Me.New("DataSource=test.db")
+            MyBase.New("DataSource=test.db")
         End Sub
-        Sub New(dbFile As String)
-            _connStr = dbFile
-        End Sub
-        Overrides Function Open() As DbConnection
-            _conn = New SQLiteConnection(_connStr)
-            _conn.Open()
-            Return _conn
-        End Function
         Function IsClose() As Boolean
             Return _conn.State = ConnectionState.Closed
         End Function

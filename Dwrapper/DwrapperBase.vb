@@ -4,7 +4,7 @@ Imports Dapper
 Imports System.Data.SqlClient
 Imports System.Data.Common
 
-Public Class DapperWrapperBase
+Public MustInherit Class DwrapperBase
     Protected _connStr As String
     Protected _conn As DbConnection
     Protected _tran As DbTransaction
@@ -16,10 +16,6 @@ Public Class DapperWrapperBase
     Public Event AfterSql(sql As String, data As Object)
     Public Event AfterExecute(sql As String, data As Object, count As Integer)
     Public Event AfterQuery(sql As String, data As Object, res As IEnumerable, type As Type)
-
-    Sub New()
-        Me.New("")
-    End Sub
 
     Sub New(connStr As String)
         _connStr = connStr
@@ -45,11 +41,7 @@ Public Class DapperWrapperBase
                              End Sub
     End Sub
 
-    Overridable Function Open() As DbConnection
-        _conn = New SqlConnection(_connStr)
-        _conn.Open()
-        Return _conn
-    End Function
+    MustOverride Function Open() As DbConnection
 
     Function BeginTransaction() As DbTransaction
         _tran = _conn.BeginTransaction
