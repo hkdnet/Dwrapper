@@ -41,6 +41,13 @@ Using dwrapper.Open
     Dim c = dwrapper.Query(Of Count)(selectSql)
     Assert.AreEqual(2, afterSqlCount)
 End Using
+
+' AutoOpen
+Dim dapperWrapper = New SQLiteDwrapper()
+Dim sql = "SELECT COUNT(*) AS count FROM member"
+Dim c = dapperWrapper.QueryTop1(Of Count)(sql)
+Assert.AreEqual(3, c.Count)
+Assert.IsTrue(dapperWrapper.IsClose())
 ```
 
 ## Install
