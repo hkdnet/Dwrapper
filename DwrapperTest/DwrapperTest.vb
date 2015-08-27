@@ -72,38 +72,38 @@ Public Class DwrapperTest
     End Sub
     <TestMethod()>
     Public Sub Transactionを張った時CommitしないとRollbackされること()
-        Dim dapperWrapper = New SQLiteDwrapperForTest()
-        Using dapperWrapper.Open
-            Dim selectSql = "SELECT COUNT(*) AS count FROM member"
-            Dim c = dapperWrapper.QueryTop1(Of Count)(selectSql)
+        Dim dwrapper = New SQLiteDwrapperForTest()
+        Dim selectSql = "SELECT COUNT(*) AS count FROM member"
+        Using dwrapper.Open
+            Dim c = dwrapper.QueryTop1(Of Count)(selectSql)
             Assert.AreEqual(_members.Count, c.Count)
-            Using tran = dapperWrapper.BeginTransaction
+            Using tran = dwrapper.BeginTransaction
                 Dim sql = "DELETE FROM member WHERE name = '{0}'"
-                dapperWrapper.Execute(String.Format(sql, _members.First.Name))
-                c = dapperWrapper.QueryTop1(Of Count)(selectSql)
+                dwrapper.Execute(String.Format(sql, _members.First.Name))
+                c = dwrapper.QueryTop1(Of Count)(selectSql)
                 Assert.AreEqual(_members.Count - 1, c.Count)
             End Using
-            c = dapperWrapper.QueryTop1(Of Count)(selectSql)
-            Assert.AreEqual(_members.Count, c.Count)
         End Using
+        Dim dwrapper2 = New SQLiteDwrapperForTest
+        Assert.AreEqual(_members.Count, dwrapper2.QueryTop1(Of Count)(selectSql).Count)
     End Sub
     <TestMethod()>
     Public Sub Transactionを張った時Commitすると確定されること()
-        Dim dapperWrapper = New SQLiteDwrapperForTest()
-        Using dapperWrapper.Open
-            Dim selectSql = "SELECT COUNT(*) AS count FROM member"
-            Dim c = dapperWrapper.QueryTop1(Of Count)(selectSql)
+        Dim selectSql = "SELECT COUNT(*) AS count FROM member"
+        Dim dwrapper = New SQLiteDwrapperForTest()
+        Using dwrapper.Open
+            Dim c = dwrapper.QueryTop1(Of Count)(selectSql)
             Assert.AreEqual(_members.Count, c.Count)
-            Using tran = dapperWrapper.BeginTransaction
+            Using tran = dwrapper.BeginTransaction
                 Dim sql = "DELETE FROM member WHERE name = '{0}'"
-                dapperWrapper.Execute(String.Format(sql, _members.First.Name))
-                c = dapperWrapper.QueryTop1(Of Count)(selectSql)
+                dwrapper.Execute(String.Format(sql, _members.First.Name))
+                c = dwrapper.QueryTop1(Of Count)(selectSql)
                 Assert.AreEqual(_members.Count - 1, c.Count)
-                dapperWrapper.Commit()
+                dwrapper.Commit()
             End Using
-            c = dapperWrapper.QueryTop1(Of Count)(selectSql)
-            Assert.AreEqual(_members.Count - 1, c.Count)
         End Using
+        Dim dwrapper2 = New SQLiteDwrapperForTest
+        Assert.AreEqual(_members.Count - 1, dwrapper2.QueryTop1(Of Count)(selectSql).Count)
     End Sub
 #End Region
 
@@ -135,11 +135,11 @@ Public Class DwrapperTest
             Using dapperWrapper.BeginTransaction
                 dapperWrapper.Execute(String.Format(deleteSql, _members.Last.Name))
                 Assert.AreEqual(1, afterSqlCount)
+                Dim selectSql = "SELECT COUNT(*) AS count FROM member"
+                Dim c = dapperWrapper.Query(Of Member)(selectSql)
+                Assert.AreEqual(2, afterSqlCount)
                 dapperWrapper.Commit()
             End Using
-            Dim selectSql = "SELECT COUNT(*) AS count FROM member"
-            Dim c = dapperWrapper.Query(Of Member)(selectSql)
-            Assert.AreEqual(2, afterSqlCount)
         End Using
     End Sub
     <TestMethod()>

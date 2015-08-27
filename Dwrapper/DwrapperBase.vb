@@ -1,7 +1,6 @@
 ﻿Option Strict On
 
 Imports Dapper
-Imports System.Data.SqlClient
 Imports System.Data.Common
 
 Public MustInherit Class DwrapperBase
@@ -16,7 +15,6 @@ Public MustInherit Class DwrapperBase
     Public Event AfterSql(sql As String, data As Object)
     Public Event AfterExecute(sql As String, data As Object, count As Integer)
     Public Event AfterQuery(sql As String, data As Object, res As IEnumerable, type As Type)
-
     Sub New(connStr As String)
         _connStr = connStr
         SetupAutoOpen()
@@ -43,7 +41,7 @@ Public MustInherit Class DwrapperBase
 
     MustOverride Function Open() As DbConnection
 
-    Function BeginTransaction() As DbTransaction
+    Public Function BeginTransaction() As DbTransaction
         _tran = _conn.BeginTransaction
         Return _tran
     End Function
@@ -73,7 +71,12 @@ Public MustInherit Class DwrapperBase
         _sql = sql
         _data = data
         RaiseEvent BeforeSql(sql, data)
-        Dim ret = _conn.Query(Of T)(_sql, param:=_data, commandTimeout:=Timeout)
+        Dim ret As IEnumerable(Of T)
+        If _tran IsNot Nothing Then
+            ret = _conn.Query(Of T)(_sql, param:=_data, commandTimeout:=Timeout, transaction:=_tran)
+        Else
+            ret = _conn.Query(Of T)(_sql, param:=_data, commandTimeout:=Timeout)
+        End If
         RaiseEvent AfterSql(sql, data)
         RaiseEvent AfterQuery(sql, data, ret, GetType(T))
         Return ret
